@@ -9,6 +9,7 @@
 #define ACC_DATA_PERIOD 100000 // Period in us
 
 pthread_mutex_t eeg_data_mutex, acc_data_mutex;
+pthread_cond_t eeg_data_cond, acc_data_cond;
 // Variables symbolising data on EEG and ACC channels
 static uint32_t eeg_data_sample = 0;
 static uint16_t acc_data_sample = 0;
@@ -27,6 +28,7 @@ void* threadEEGGenerator(void* args)
 		eeg_data_sample++;
 		printf("EEG Data available ! value %lu at %lu\n", eeg_data_sample, next.tv_nsec);
 		pthread_mutex_unlock(&eeg_data_mutex);
+		pthread_cond_signal(&eeg_data_cond);
 	}
 	return NULL;
 }
@@ -45,22 +47,21 @@ void* threadACCGenerator(void* args)
 		acc_data_sample++;
 		printf("ACC Data available ! value %lu at %lu\n", acc_data_sample, next.tv_nsec);
 		pthread_mutex_unlock(&acc_data_mutex);
+		pthread_cond_signal(&acc_data_cond);
 	}
 	return NULL;
 }
 
-void readEEGData(struct eegData *eeg_sample) {
-	pthread_mutex_lock(&eeg_data_mutex);
+void readEEGData(struct eegData *eeg_sample)
+{
 	eeg_sample->eeg1 = eeg_data_sample;
 	eeg_sample->eeg2 = eeg_data_sample;
 	eeg_sample->eeg3 = eeg_data_sample;
-	pthread_mutex_unlock(&eeg_data_mutex);
 }
 
-void readACCData(struct accData *acc_sample) {
-	pthread_mutex_lock(&acc_data_mutex);
+void readACCData(struct accData *acc_sample)
+{
 	acc_sample->accX = acc_data_sample;
 	acc_sample->accY = acc_data_sample;
 	acc_sample->accZ = acc_data_sample;
-	pthread_mutex_unlock(&acc_data_mutex);
 }

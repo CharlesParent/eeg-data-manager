@@ -8,7 +8,7 @@ launch:
 	make all
 	./main
 
-main: main.o time_utils.o data_generators.o
+main: main.o time_utils.o data_generators.o data_gatherers.o
 	$(CC) $(LDFLAGS) $^ -o $@
 clean:
 	rm -f main *.o 

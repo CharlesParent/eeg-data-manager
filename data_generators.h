@@ -15,7 +15,13 @@ struct accData {
 	uint16_t accZ;
 };
 
+extern pthread_mutex_t eeg_data_mutex, acc_data_mutex;
+extern pthread_cond_t eeg_data_cond, acc_data_cond;
+
 void* threadEEGGenerator(void* args);
 void* threadACCGenerator(void* args);
+
+void readEEGData(struct eegData *eeg_sample);
+void readACCData(struct accData *acc_sample);
 
 #endif // !DATA_GENERATORS
