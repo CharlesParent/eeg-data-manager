@@ -1,11 +1,17 @@
 #include <time.h>
 #include <stdio.h>
+#include <semaphore.h>
 
 #include "data_generators.h"
 #include "time_utils.h"
 
 #define EEG_DATA_PERIOD 5000 // Period in us
 #define ACC_DATA_PERIOD 100000 // Period in us
+
+pthread_mutex_t eeg_data_mutex, acc_data_mutex;
+// Variables symbolising data on EEG and ACC channels
+static uint32_t eeg_data_sample = 0;
+static uint16_t acc_data_sample = 0;
 
 void* threadEEGGenerator(void* args)
 {
@@ -17,7 +23,10 @@ void* threadEEGGenerator(void* args)
 	{
 		timespec_add_us(&next, EEG_DATA_PERIOD);
 		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL);
-		printf("EEG Data available ! at %lu\n", next.tv_nsec);
+		pthread_mutex_lock(&eeg_data_mutex);
+		eeg_data_sample++;
+		printf("EEG Data available ! value %lu at %lu\n", eeg_data_sample, next.tv_nsec);
+		pthread_mutex_unlock(&eeg_data_mutex);
 	}
 	return NULL;
 }
@@ -32,19 +41,26 @@ void* threadACCGenerator(void* args)
 	{
 		timespec_add_us(&next, ACC_DATA_PERIOD);
 		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL);
-		printf("ACC Data available ! at %lu\n", next.tv_nsec);
+		pthread_mutex_lock(&acc_data_mutex);
+		acc_data_sample++;
+		printf("ACC Data available ! value %lu at %lu\n", acc_data_sample, next.tv_nsec);
+		pthread_mutex_unlock(&acc_data_mutex);
 	}
 	return NULL;
 }
 
 void readEEGData(struct eegData *eeg_sample) {
-	eeg_sample->eeg1 = 0;
-	eeg_sample->eeg2 = 0;
-	eeg_sample->eeg3 = 0;
+	pthread_mutex_lock(&eeg_data_mutex);
+	eeg_sample->eeg1 = eeg_data_sample;
+	eeg_sample->eeg2 = eeg_data_sample;
+	eeg_sample->eeg3 = eeg_data_sample;
+	pthread_mutex_unlock(&eeg_data_mutex);
 }
 
 void readACCData(struct accData *acc_sample) {
-	acc_sample->accX = 0;
-	acc_sample->accY = 0;
-	acc_sample->accZ = 0;
+	pthread_mutex_lock(&acc_data_mutex);
+	acc_sample->accX = acc_data_sample;
+	acc_sample->accY = acc_data_sample;
+	acc_sample->accZ = acc_data_sample;
+	pthread_mutex_unlock(&acc_data_mutex);
 }
