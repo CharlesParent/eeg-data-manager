@@ -46,13 +46,16 @@ void* threadEEGProcessor(void* args)
 	}
 }
 
-int initProcessorThreads() {
+int initProcessorThreads(pthread_attr_t *attr) {
+	struct sched_param param;
 	pthread_t eeg_processor_thread_id;
 	int ret;
 	int r = 0;
+	param.sched_priority = 3;
+	pthread_attr_setschedparam(attr, &param);
 
 	/*creating threads to process EEG and ACC data*/
-	ret=pthread_create(&eeg_processor_thread_id, NULL, &threadEEGProcessor, NULL);
+	ret=pthread_create(&eeg_processor_thread_id, attr, &threadEEGProcessor, NULL);
 	if(ret==0){
 		printf("Thread created successfully.\n");
 	} else {

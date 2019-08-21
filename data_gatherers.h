@@ -9,6 +9,6 @@ extern struct eegData sample_storage[100];
 
 void* threadEEGGatherer(void* args);
 void* threadACCGatherer(void* args);
-int initGathererThreads();
+int initGathererThreads(pthread_attr_t *attr);
 
 #endif // !DATA_GATHERERS

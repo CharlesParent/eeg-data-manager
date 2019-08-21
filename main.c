@@ -9,22 +9,24 @@
 #include "data_processors.h"
 
 int main() {
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
 	int r;
-	r = initProcessorThreads();
+	r = initProcessorThreads(&attr);
 	if (r == -1) {
 		return 0;
 	}
-	r = initGathererThreads();
+	r = initGathererThreads(&attr);
 	if ( r == -1) {
 		return 0;
 	}
-	r = initSensorThreads();
+	r = initSensorThreads(&attr);
 	if (r == -1) {
 		return 0;
 	}
 
-	printf("I am main function.\n");
-	sleep(2);
+	sleep(5);
 	printf("Terminating main\n");
 	return 0;
 }

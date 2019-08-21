@@ -49,8 +49,10 @@ void* threadACCGatherer(void* args)
 	return NULL;
 }
 
-int initGathererThreads()
+int initGathererThreads(pthread_attr_t* attr)
 {
+	
+	struct sched_param param;
 	pthread_t eeg_gatherer_thread_id, acc_gatherer_thread_id;
 	int ret;
 	int r = 0;
@@ -58,8 +60,11 @@ int initGathererThreads()
 	sem_init(&fill_count,0,0);
 	sem_init(&empty_count,0,100);
 
+	param.sched_priority = 2;
+	pthread_attr_setschedparam(attr, &param);
+
 	/*creating threads to generate EEG and ACC data*/
-	ret=pthread_create(&eeg_gatherer_thread_id, NULL, &threadEEGGatherer, NULL);
+	ret=pthread_create(&eeg_gatherer_thread_id, attr, &threadEEGGatherer, NULL);
 	if(ret==0){
 		printf("Thread created successfully.\n");
 	} else {
@@ -67,7 +72,7 @@ int initGathererThreads()
 		r = -1;
 	}
 
-	ret=pthread_create(&acc_gatherer_thread_id, NULL, &threadACCGatherer, NULL);
+	ret=pthread_create(&acc_gatherer_thread_id, attr, &threadACCGatherer, NULL);
 	if(ret==0){
 		printf("Thread created successfully.\n");
 	} else {
