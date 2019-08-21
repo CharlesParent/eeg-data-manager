@@ -21,7 +21,8 @@ That way when reading binary file, we read the first byte and then know how long
 - When writting data to circular buffer, time is not stored in the structure. It should be stored as well in order to analyse correctly data once stored in the binary file
 
 ## Limitations / Improvements
-- First threads are not correctly scheduled. First Threads should have a high priority in order to be shure to collect data at the right moment. A scheduling policy should have been used such as SCHED_RR or SCHED_FIFO
+- First threads are not correctly scheduled. First Threads should have a high priority in order to be shure to collect data at the right moment. A scheduling policy should have been used such as SCHED_RR or SCHED_FIFO. Hence Thread execution is not guarantee as intended.
+- Threads gathering data do not detect when they miss a sample. It could have been done by checking the amount of time between 2 samples gathered 
 - Implementation highly depends on the amount of time "algo" function takes. If it takes too much time then circular buffer may end full and threads gathering data will no be able to store data anymore. It would be really interesting to know what makes the algo function last longer on some occasions.
 - Main function only sleeps and terminates violently after initialization. One better way to stop the program would have been to wait for threads generating data to exit, and set these threads to exit when the generated a X samples.
 - Some values should have been defined in the code, such as CIRCULAR_BUFFER_LENGTH (100)
