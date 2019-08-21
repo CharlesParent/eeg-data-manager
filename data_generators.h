@@ -24,4 +24,6 @@ void* threadACCGenerator(void* args);
 void readEEGData(struct eegData *eeg_sample);
 void readACCData(struct accData *acc_sample);
 
+int initSensorThreads(void);
+
 #endif // !DATA_GENERATORS

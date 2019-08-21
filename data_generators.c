@@ -67,3 +67,28 @@ void readACCData(struct accData *acc_sample)
 	acc_sample->accY = acc_data_sample;
 	acc_sample->accZ = acc_data_sample;
 }
+
+int initSensorThreads(void)
+{
+	pthread_t eeg_thread_id, acc_thread_id;
+	int ret;
+	int r = 0;
+
+	/*creating threads to generate EEG and ACC data*/
+	ret=pthread_create(&eeg_thread_id, NULL, &threadEEGGenerator, NULL);
+	if(ret==0){
+		printf("Thread created successfully.\n");
+	} else {
+		printf("Thread not created.\n");
+		r = -1;
+	}
+
+	ret=pthread_create(&acc_thread_id, NULL, &threadACCGenerator, NULL);
+	if(ret==0){
+		printf("Thread created successfully.\n");
+	} else {
+		printf("Thread not created.\n");
+		r = -1;
+	}
+	return r;
+}
