@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 #include "data_generators.h"
 
@@ -16,7 +17,7 @@ void* threadEEGGatherer(void* args)
 		clock_gettime(CLOCK_REALTIME, &now);
 		struct eegData *sample = (struct eegData*) malloc(sizeof(struct eegData));
 		readEEGData(sample);
-		printf("received data %lu at %lu\n", sample->eeg1, now.tv_nsec);
+		printf("received data %" PRIu32" at %lu\n", sample->eeg1, now.tv_nsec);
 		pthread_mutex_unlock(&eeg_data_mutex);
 	}
 	return NULL;
@@ -32,7 +33,7 @@ void* threadACCGatherer(void* args)
 		clock_gettime(CLOCK_REALTIME, &now);
 		struct accData *sample = (struct accData*) malloc(sizeof(struct accData));
 		readACCData(sample);
-		printf("received data %lu at %lu\n", sample->accX, now.tv_nsec);
+		printf("received data %" PRIu16" at %lu\n", sample->accX, now.tv_nsec);
 		pthread_mutex_unlock(&acc_data_mutex);
 	}
 	return NULL;

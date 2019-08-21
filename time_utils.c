@@ -18,4 +18,5 @@ int timespec_cmp(struct timespec *a, struct timespec *b)
 		else if (a->tv_nsec == b->tv_nsec) return 0;
 	else return -1;
 	}
+	return 4; // Should never happen, fix warning at compilation
 }

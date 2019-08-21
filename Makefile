@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS=-Wall -g -O0 -Iinclude -Ipthread#-Werror
+CFLAGS=-Wall -g -O2 -Iinclude -Ipthread#-Werror
 LDFLAGS=-lrt -lpthread
 
 all: main
@@ -9,6 +9,6 @@ launch:
 	./main
 
 main: main.o time_utils.o data_generators.o data_gatherers.o
-	$(CC) $(LDFLAGS) $^ -o $@
+	$(CC) $^ -o $@ $(LDFLAGS)
 clean:
 	rm -f main *.o 

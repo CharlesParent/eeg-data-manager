@@ -1,6 +1,8 @@
 #include <time.h>
 #include <stdio.h>
 #include <semaphore.h>
+#include <pthread.h>
+#include <inttypes.h>
 
 #include "data_generators.h"
 #include "time_utils.h"
@@ -17,7 +19,7 @@ static uint16_t acc_data_sample = 0;
 void* threadEEGGenerator(void* args)
 {
 	struct timespec next;
-	struct timespec now;
+	//struct timespec now;
 
 	clock_gettime(CLOCK_REALTIME, &next);
 	while(1)
@@ -26,7 +28,7 @@ void* threadEEGGenerator(void* args)
 		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL);
 		pthread_mutex_lock(&eeg_data_mutex);
 		eeg_data_sample++;
-		printf("EEG Data available ! value %lu at %lu\n", eeg_data_sample, next.tv_nsec);
+		printf("EEG Data available ! value %" PRIu32" at %lu\n", eeg_data_sample, next.tv_nsec);
 		pthread_mutex_unlock(&eeg_data_mutex);
 		pthread_cond_signal(&eeg_data_cond);
 	}
@@ -36,7 +38,7 @@ void* threadEEGGenerator(void* args)
 void* threadACCGenerator(void* args)
 {
 	struct timespec next;
-	struct timespec now;
+	//struct timespec now;
 
 	clock_gettime(CLOCK_REALTIME, &next);
 	while(1)
@@ -45,7 +47,7 @@ void* threadACCGenerator(void* args)
 		clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &next, NULL);
 		pthread_mutex_lock(&acc_data_mutex);
 		acc_data_sample++;
-		printf("ACC Data available ! value %lu at %lu\n", acc_data_sample, next.tv_nsec);
+		printf("ACC Data available ! value %" PRIu16" at %lu\n", acc_data_sample, next.tv_nsec);
 		pthread_mutex_unlock(&acc_data_mutex);
 		pthread_cond_signal(&acc_data_cond);
 	}
