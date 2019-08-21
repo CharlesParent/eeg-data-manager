@@ -5,16 +5,29 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+#include "data_gatherers.h"
 #include "data_generators.h"
+
+struct eegData sample_storage[100];
+
+static int next_index_to_write = 0;
+sem_t empty_count, fill_count;
 
 void* threadEEGGatherer(void* args)
 {
 	struct timespec now;
 	while(1)
 	{
+		// Wait for data to be produced by EEGGeneratorThread
 		pthread_mutex_lock(&eeg_data_mutex);
 		pthread_cond_wait(&eeg_data_cond, &eeg_data_mutex);
 		clock_gettime(CLOCK_REALTIME, &now);
+		// Store data in eegBuffer
+		sem_wait(&empty_count);
+		readEEGData(&(sample_storage[next_index_to_write]));
+		next_index_to_write++;
+		next_index_to_write = next_index_to_write % 100;
+		sem_post(&fill_count);
 		struct eegData *sample = (struct eegData*) malloc(sizeof(struct eegData));
 		readEEGData(sample);
 		printf("received data %" PRIu32" at %lu\n", sample->eeg1, now.tv_nsec);
@@ -44,6 +57,9 @@ int initGathererThreads()
 	pthread_t eeg_gatherer_thread_id, acc_gatherer_thread_id;
 	int ret;
 	int r = 0;
+
+	sem_init(&fill_count,0,0);
+	sem_init(&empty_count,0,100);
 
 	/*creating threads to generate EEG and ACC data*/
 	ret=pthread_create(&eeg_gatherer_thread_id, NULL, &threadEEGGatherer, NULL);

@@ -6,9 +6,14 @@
 #include "time_utils.h"
 #include "data_generators.h"
 #include "data_gatherers.h"
+#include "data_processors.h"
 
 int main() {
 	int r;
+	r = initProcessorThreads();
+	if (r == -1) {
+		return 0;
+	}
 	r = initGathererThreads();
 	if ( r == -1) {
 		return 0;
