@@ -30,4 +30,4 @@ That way when reading binary file, we read the first byte and then know how long
 ## Differences with implementation on FreeRTOS
 - First threads would have been transformed into tasks. These tasks would have allow me to indicate the delay between 2 executions
 - I don't know much about FreeRTOS, but I read that time slicing can be managed on such an OS, allowing to slice time in slots and allocate this slots to thread execution. That would allow to be shure to execute a thread periodically.
-- Once data is gathered, events would have been creating to indicate to threads processing data that data is ready to be processed by algo function. I guess it would works similarly as events in ChibiOS[http://www.chibios.org/dokuwiki/doku.php?id=chibios:book:kernel_events]
+- Once data is gathered, events would have been creating to indicate to threads processing data that data is ready to be processed by algo function. I guess it would works similarly as [events in ChibiOS](http://www.chibios.org/dokuwiki/doku.php?id=chibios:book:kernel_events)
