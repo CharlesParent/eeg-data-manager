@@ -19,7 +19,6 @@ static uint16_t acc_data_sample = 0;
 void* threadEEGGenerator(void* args)
 {
 	struct timespec next;
-	//struct timespec now;
 
 	clock_gettime(CLOCK_REALTIME, &next);
 	while(1)
@@ -38,7 +37,6 @@ void* threadEEGGenerator(void* args)
 void* threadACCGenerator(void* args)
 {
 	struct timespec next;
-	//struct timespec now;
 
 	clock_gettime(CLOCK_REALTIME, &next);
 	while(1)
@@ -56,6 +54,7 @@ void* threadACCGenerator(void* args)
 
 void readEEGData(struct eegData *eeg_sample)
 {
+	printf("read data %" PRIu32"\n", eeg_data_sample);
 	eeg_sample->eeg1 = eeg_data_sample;
 	eeg_sample->eeg2 = eeg_data_sample;
 	eeg_sample->eeg3 = eeg_data_sample;

@@ -28,9 +28,6 @@ void* threadEEGGatherer(void* args)
 		next_index_to_write++;
 		next_index_to_write = next_index_to_write % 100;
 		sem_post(&fill_count);
-		struct eegData *sample = (struct eegData*) malloc(sizeof(struct eegData));
-		readEEGData(sample);
-		printf("received data %" PRIu32" at %lu\n", sample->eeg1, now.tv_nsec);
 		pthread_mutex_unlock(&eeg_data_mutex);
 	}
 	return NULL;

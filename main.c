@@ -24,7 +24,7 @@ int main() {
 	}
 
 	printf("I am main function.\n");
-	sleep(10);
+	sleep(2);
 	printf("Terminating main\n");
 	return 0;
 }
